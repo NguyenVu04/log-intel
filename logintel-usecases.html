@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LogIntel — Đặc Tả Use Cases</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ink: #0d1117;
+  --ink-2: #1c2333;
+  --ink-3: #2d3748;
+  --paper: #f8f6f1;
+  --paper-2: #f0ede6;
+  --paper-3: #e8e4db;
+  --rule: #d4cfc4;
+  --accent-rust: #c0392b;
+  --accent-rust-light: #fdf0ee;
+  --accent-teal: #0e7c7b;
+  --accent-teal-light: #e8f7f7;
+  --accent-amber: #b7600a;
+  --accent-amber-light: #fdf4e7;
+  --accent-navy: #1b3a5c;
+  --accent-navy-light: #eef3f8;
+  --accent-green: #276749;
+  --accent-green-light: #edf7f2;
+  --accent-purple: #553c9a;
+  --accent-purple-light: #f3f0fb;
+  --priority-must: #c0392b;
+  --priority-should: #b7600a;
+  --priority-could: #276749;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'JetBrains Mono', monospace;
+  --font-serif: 'Instrument Serif', serif;
+  --sidebar-w: 280px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13.5px;
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--ink);
+  color: #c9d1d9;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid #30363d;
+}
+
+.brand-logo {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  display: block;
+}
+
+.brand-sub {
+  font-size: 10px;
+  color: #8b949e;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  display: block;
+}
+
+.sidebar-section {
+  padding: 16px 0 8px;
+}
+
+.sidebar-section-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #484f58;
+  padding: 0 24px 8px;
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 24px;
+  color: #8b949e;
+  text-decoration: none;
+  font-size: 12px;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+}
+
+.sidebar-item:hover {
+  color: #e6edf3;
+  background: #161b22;
+}
+
+.sidebar-item.active {
+  color: #fff;
+  border-left-color: #c0392b;
+  background: #161b22;
+}
+
+.sidebar-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sidebar-priority {
+  margin-left: auto;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.p-must  { background: rgba(192,57,43,0.2);  color: #f87171; }
+.p-should{ background: rgba(183,96,10,0.2);  color: #fbbf24; }
+.p-could { background: rgba(39,103,73,0.2);  color: #6ee7b7; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 24px;
+  border-top: 1px solid #30363d;
+  font-size: 10px;
+  color: #484f58;
+}
+
+/* ── MAIN ── */
+#main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--ink);
+  padding: 72px 80px 64px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(192,57,43,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(192,57,43,0.6), transparent);
+}
+
+.hero-eyebrow {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #c0392b;
+  margin-bottom: 16px;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+}
+
+.hero-title span {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 52px;
+  color: #c0392b;
+}
+
+.hero-desc {
+  font-size: 14px;
+  color: #8b949e;
+  max-width: 640px;
+  line-height: 1.8;
+  margin-bottom: 40px;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-stat-num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.hero-stat-label {
+  font-size: 10px;
+  color: #484f58;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ── PRIORITY LEGEND ── */
+.legend-bar {
+  background: var(--paper-2);
+  border-bottom: 1px solid var(--rule);
+  padding: 16px 80px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.legend-badge {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+}
+
+.badge-must   { background: var(--accent-rust);   color: #fff; }
+.badge-should { background: var(--accent-amber);  color: #fff; }
+.badge-could  { background: var(--accent-green);  color: #fff; }
+.badge-wont   { background: var(--ink-3);         color: #fff; }
+
+.legend-sep { color: var(--rule); font-size: 18px; margin: 0 4px; }
+
+/* ── SECTION HEADER ── */
+.section-block {
+  padding: 64px 80px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.section-block:last-child { border-bottom: none; }
+
+.section-eyebrow {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-rust);
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.section-desc {
+  font-size: 13px;
+  color: var(--ink-3);
+  max-width: 700px;
+  line-height: 1.8;
+  margin-bottom: 40px;
+}
+
+/* ── USE CASE CARD ── */
+.uc-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.uc-card {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.uc-card:hover {
+  box-shadow: 0 4px 24px rgba(13,17,23,0.08);
+}
+
+.uc-header {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--rule);
+}
+
+.uc-id-stripe {
+  width: 6px;
+  flex-shrink: 0;
+}
+.stripe-must   { background: var(--priority-must); }
+.stripe-should { background: var(--priority-should); }
+.stripe-could  { background: var(--priority-could); }
+
+.uc-header-body {
+  flex: 1;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.uc-id {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #8b949e;
+  flex-shrink: 0;
+}
+
+.uc-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  flex: 1;
+}
+
+.uc-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.uc-tag {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid;
+}
+
+.tag-go      { color: #00687a; border-color: #b2e4eb; background: #eef9fb; }
+.tag-rust    { color: #8b2016; border-color: #f5c4bc; background: #fef7f6; }
+.tag-java    { color: #7a4200; border-color: #f5d9ab; background: #fdf8ef; }
+.tag-react   { color: #054d5e; border-color: #b2d8e1; background: #eef7fb; }
+
+.uc-body { padding: 24px; }
+
+.uc-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.uc-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.uc-block-label {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #8b949e;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.uc-actor-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12.5px;
+}
+
+.actor-icon {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.actor-eng  { background: var(--accent-navy-light);   color: var(--accent-navy); }
+.actor-sys  { background: var(--accent-rust-light);   color: var(--accent-rust); }
+.actor-chat { background: var(--accent-teal-light);   color: var(--accent-teal); }
+
+.flow-list {
+  list-style: none;
+  counter-reset: flow;
+}
+
+.flow-list li {
+  counter-increment: flow;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.flow-list li::before {
+  content: counter(flow, decimal-leading-zero);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent-rust);
+  flex-shrink: 0;
+  padding-top: 2px;
+  min-width: 20px;
+}
+
+.alt-list {
+  list-style: none;
+}
+
+.alt-list li {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+.alt-list li::before {
+  content: '⚠';
+  color: var(--accent-amber);
+  flex-shrink: 0;
+}
+
+/* Priority matrix */
+.priority-matrix {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 0;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.pm-header {
+  background: var(--ink);
+  color: #8b949e;
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+}
+
+.pm-cell {
+  padding: 10px 16px;
+  font-size: 12px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+}
+
+.pm-cell.center { justify-content: center; }
+
+.difficulty-bar {
+  display: flex;
+  gap: 3px;
+}
+
+.d-pip {
+  width: 8px; height: 8px;
+  border-radius: 1px;
+  background: var(--rule);
+}
+.d-pip.filled-hard   { background: var(--accent-rust); }
+.d-pip.filled-medium { background: var(--accent-amber); }
+.d-pip.filled-easy   { background: var(--accent-green); }
+
+.value-pill {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.v-high   { background: #dcfce7; color: #166534; }
+.v-medium { background: #fef9c3; color: #713f12; }
+.v-low    { background: #f1f5f9; color: #475569; }
+
+/* Code snippet */
+.code-block {
+  background: var(--ink-2);
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin: 12px 0;
+  overflow-x: auto;
+}
+
+.code-block code {
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  color: #a8d8ea;
+  line-height: 1.8;
+  white-space: pre;
+}
+
+.code-comment { color: #484f58; }
+.code-keyword { color: #ff7b72; }
+.code-string  { color: #a5d6ff; }
+.code-fn      { color: #d2a8ff; }
+.code-num     { color: #79c0ff; }
+
+/* Acceptance criteria */
+.ac-list {
+  list-style: none;
+}
+
+.ac-list li {
+  display: flex;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  border-bottom: 1px solid var(--paper-3);
+}
+
+.ac-list li:last-child { border-bottom: none; }
+
+.ac-list li::before {
+  content: '✓';
+  color: var(--accent-green);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* SFR box */
+.sfr-box {
+  background: var(--ink);
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin-top: 16px;
+}
+
+.sfr-title {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #484f58;
+  margin-bottom: 12px;
+}
+
+.sfr-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.sfr-key {
+  color: #8b949e;
+  flex-shrink: 0;
+  min-width: 160px;
+}
+
+.sfr-val { color: #e6edf3; }
+
+.sfr-val .highlight { color: #58a6ff; font-weight: 500; }
+
+/* Overview matrix */
+.overview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.overview-table th {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--ink);
+  padding: 12px 16px;
+  text-align: left;
+  border: 1px solid #30363d;
+}
+
+.overview-table td {
+  padding: 10px 16px;
+  border: 1px solid var(--rule);
+  vertical-align: middle;
+}
+
+.overview-table tr:nth-child(even) td { background: var(--paper-2); }
+.overview-table tr:hover td { background: var(--accent-navy-light); }
+
+.ot-id {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  color: #8b949e;
+  white-space: nowrap;
+}
+
+/* Dependency chip */
+.dep-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--paper-3);
+  color: var(--ink-3);
+  margin: 2px;
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+/* Note box */
+.note-box {
+  border-left: 3px solid var(--accent-amber);
+  background: var(--accent-amber-light);
+  padding: 12px 16px;
+  border-radius: 0 4px 4px 0;
+  margin: 12px 0;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  line-height: 1.7;
+}
+
+.note-box strong { color: var(--accent-amber); }
+
+.info-box {
+  border-left: 3px solid var(--accent-teal);
+  background: var(--accent-teal-light);
+  padding: 12px 16px;
+  border-radius: 0 4px 4px 0;
+  margin: 12px 0;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  line-height: 1.7;
+}
+
+.info-box strong { color: var(--accent-teal); }
+
+/* Expandable */
+.expand-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--accent-rust);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+  text-decoration: none;
+}
+
+.expand-toggle:hover { color: var(--accent-rust); text-decoration: underline; }
+
+.expand-content { display: none; }
+.expand-content.open { display: block; }
+
+/* Scroll to top */
+.scroll-top {
+  position: fixed;
+  bottom: 32px; right: 32px;
+  width: 40px; height: 40px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 200;
+}
+
+.scroll-top.visible { opacity: 1; }
+
+/* Print */
+@media print {
+  #sidebar { display: none; }
+  #main { margin-left: 0; }
+  .hero { print-color-adjust: exact; }
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.uc-card {
+  animation: fadeUp 0.4s ease both;
+}
+
+.uc-card:nth-child(1) { animation-delay: 0.05s; }
+.uc-card:nth-child(2) { animation-delay: 0.10s; }
+.uc-card:nth-child(3) { animation-delay: 0.15s; }
+.uc-card:nth-child(4) { animation-delay: 0.20s; }
+.uc-card:nth-child(5) { animation-delay: 0.25s; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════ SIDEBAR ════════════════════════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-logo">LogIntel</span>
+    <span class="brand-sub">Use Case Specification v1.0</span>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Tổng quan</div>
+    <a class="sidebar-item active" href="#overview">
+      <span class="sidebar-dot" style="background:#8b949e"></span>
+      Ma trận use cases
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Thu thập & Lưu trữ</div>
+    <a class="sidebar-item" href="#uc01">
+      <span class="sidebar-dot" style="background:#c0392b"></span>
+      UC-01 · Sidecar thu thập log
+      <span class="sidebar-priority p-must">MUST</span>
+    </a>
+    <a class="sidebar-item" href="#uc02">
+      <span class="sidebar-dot" style="background:#c0392b"></span>
+      UC-02 · Chuẩn hoá & lưu trữ
+      <span class="sidebar-priority p-must">MUST</span>
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Causal Intelligence</div>
+    <a class="sidebar-item" href="#uc03">
+      <span class="sidebar-dot" style="background:#c0392b"></span>
+      UC-03 · Xây dựng causal graph
+      <span class="sidebar-priority p-must">MUST</span>
+    </a>
+    <a class="sidebar-item" href="#uc04">
+      <span class="sidebar-dot" style="background:#b7600a"></span>
+      UC-04 · Duyệt đồ thị nhân quả
+      <span class="sidebar-priority p-should">SHOULD</span>
+    </a>
+    <a class="sidebar-item" href="#uc05">
+      <span class="sidebar-dot" style="background:#b7600a"></span>
+      UC-05 · Xác nhận cạnh nhân quả
+      <span class="sidebar-priority p-should">SHOULD</span>
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Runbook Learning</div>
+    <a class="sidebar-item" href="#uc06">
+      <span class="sidebar-dot" style="background:#c0392b"></span>
+      UC-06 · Ghi nhận giải quyết sự cố
+      <span class="sidebar-priority p-must">MUST</span>
+    </a>
+    <a class="sidebar-item" href="#uc07">
+      <span class="sidebar-dot" style="background:#c0392b"></span>
+      UC-07 · Đề xuất runbook
+      <span class="sidebar-priority p-must">MUST</span>
+    </a>
+    <a class="sidebar-item" href="#uc08">
+      <span class="sidebar-dot" style="background:#b7600a"></span>
+      UC-08 · Phát hiện runbook drift
+      <span class="sidebar-priority p-should">SHOULD</span>
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">NL Query Compiler</div>
+    <a class="sidebar-item" href="#uc09">
+      <span class="sidebar-dot" style="background:#c0392b"></span>
+      UC-09 · Biên dịch câu hỏi tự nhiên
+      <span class="sidebar-priority p-must">MUST</span>
+    </a>
+    <a class="sidebar-item" href="#uc10">
+      <span class="sidebar-dot" style="background:#b7600a"></span>
+      UC-10 · Thư viện query chung
+      <span class="sidebar-priority p-should">SHOULD</span>
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Giao diện React</div>
+    <a class="sidebar-item" href="#uc11">
+      <span class="sidebar-dot" style="background:#c0392b"></span>
+      UC-11 · Xem log & live tail
+      <span class="sidebar-priority p-must">MUST</span>
+    </a>
+    <a class="sidebar-item" href="#uc12">
+      <span class="sidebar-dot" style="background:#c0392b"></span>
+      UC-12 · Chat với chatbot
+      <span class="sidebar-priority p-must">MUST</span>
+    </a>
+    <a class="sidebar-item" href="#uc13">
+      <span class="sidebar-dot" style="background:#b7600a"></span>
+      UC-13 · Causal graph explorer
+      <span class="sidebar-priority p-should">SHOULD</span>
+    </a>
+    <a class="sidebar-item" href="#uc14">
+      <span class="sidebar-dot" style="background:#276749"></span>
+      UC-14 · Snapshot & so sánh đồ thị
+      <span class="sidebar-priority p-could">COULD</span>
+    </a>
+  </div>
+
+  <div class="sidebar-footer">
+    LogIntel v0.1 · 14 use cases · 2025
+  </div>
+</nav>
+
+<!-- ════════════════════════════════ MAIN ════════════════════════════════ -->
+<main id="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Tài liệu đặc tả</div>
+    <h1 class="hero-title">Use Case<br/><span>Specification</span></h1>
+    <p class="hero-desc">
+      Đặc tả chi tiết 14 use case chính của LogIntel — nền tảng quan sát log nhân quả.
+      Mỗi use case bao gồm luồng chính, luồng ngoại lệ, tiêu chí chấp nhận và yêu cầu
+      phi chức năng, đủ để hỗ trợ hiện thực và thống nhất thiết kế giữa các team.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-stat">
+        <span class="hero-stat-num">14</span>
+        <span class="hero-stat-label">Use Cases</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">5</span>
+        <span class="hero-stat-label">MUST implement</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">4</span>
+        <span class="hero-stat-label">Ngôn ngữ</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">v1.0</span>
+        <span class="hero-stat-label">Phiên bản</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend-bar">
+    <strong style="font-family:var(--font-display);font-size:11px;color:var(--ink)">Mức ưu tiên:</strong>
+    <div class="legend-item"><span class="legend-badge badge-must">MUST</span> Bắt buộc trong MVP — không thể bỏ qua</div>
+    <div class="legend-item"><span class="legend-badge badge-should">SHOULD</span> Quan trọng — nên có trong MVP nếu đủ thời gian</div>
+    <div class="legend-item"><span class="legend-badge badge-could">COULD</span> Tăng giá trị — dành cho v2.0</div>
+    <span class="legend-sep">·</span>
+    <div class="legend-item" style="font-size:11px;color:var(--ink-3)">
+      Độ khó: <span style="color:var(--accent-rust)">●●●</span> Cao &nbsp;
+      <span style="color:var(--accent-amber)">●●○</span> Trung bình &nbsp;
+      <span style="color:var(--accent-green)">●○○</span> Thấp
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ OVERVIEW ══════════════════════════════ -->
+  <section class="section-block" id="overview">
+    <div class="section-eyebrow">Tổng quan</div>
+    <h2 class="section-title">Ma trận Use Cases</h2>
+    <p class="section-desc">Bảng tổng hợp tất cả use case, mức ưu tiên, độ khó hiện thực và giá trị mang lại. Dùng để lập kế hoạch sprint và phân công nhân lực.</p>
+
+    <table class="overview-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên Use Case</th>
+          <th>Layer</th>
+          <th>Ưu tiên</th>
+          <th>Độ khó</th>
+          <th>Giá trị</th>
+          <th>Phụ thuộc</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="ot-id">UC-01</span></td>
+          <td>Sidecar thu thập log từ pod</td>
+          <td><span class="uc-tag tag-go">Go</span></td>
+          <td><span class="legend-badge badge-must">MUST</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-medium"></div><div class="d-pip filled-medium"></div><div class="d-pip"></div></div></td>
+          <td><span class="value-pill v-high">Cao</span></td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-02</span></td>
+          <td>Chuẩn hoá & lưu trữ log event</td>
+          <td><span class="uc-tag tag-rust">Rust</span></td>
+          <td><span class="legend-badge badge-must">MUST</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-medium"></div><div class="d-pip filled-medium"></div><div class="d-pip"></div></div></td>
+          <td><span class="value-pill v-high">Cao</span></td>
+          <td><span class="dep-chip">UC-01</span></td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-03</span></td>
+          <td>Xây dựng causal knowledge graph</td>
+          <td><span class="uc-tag tag-rust">Rust</span></td>
+          <td><span class="legend-badge badge-must">MUST</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-hard"></div><div class="d-pip filled-hard"></div><div class="d-pip filled-hard"></div></div></td>
+          <td><span class="value-pill v-high">Cao</span></td>
+          <td><span class="dep-chip">UC-02</span></td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-04</span></td>
+          <td>Duyệt đồ thị nhân quả (GraphQL)</td>
+          <td><span class="uc-tag tag-rust">Rust</span></td>
+          <td><span class="legend-badge badge-should">SHOULD</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-medium"></div><div class="d-pip filled-medium"></div><div class="d-pip"></div></div></td>
+          <td><span class="value-pill v-high">Cao</span></td>
+          <td><span class="dep-chip">UC-03</span></td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-05</span></td>
+          <td>Kỹ sư xác nhận cạnh nhân quả</td>
+          <td><span class="uc-tag tag-react">React</span> <span class="uc-tag tag-rust">Rust</span></td>
+          <td><span class="legend-badge badge-should">SHOULD</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-easy"></div><div class="d-pip"></div><div class="d-pip"></div></div></td>
+          <td><span class="value-pill v-high">Cao</span></td>
+          <td><span class="dep-chip">UC-03</span> <span class="dep-chip">UC-13</span></td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-06</span></td>
+          <td>Ghi nhận giải quyết sự cố</td>
+          <td><span class="uc-tag tag-java">Java</span></td>
+          <td><span class="legend-badge badge-must">MUST</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-medium"></div><div class="d-pip filled-medium"></div><div class="d-pip"></div></div></td>
+          <td><span class="value-pill v-high">Cao</span></td>
+          <td><span class="dep-chip">UC-12</span></td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-07</span></td>
+          <td>Đề xuất runbook khi có sự cố</td>
+          <td><span class="uc-tag tag-java">Java</span></td>
+          <td><span class="legend-badge badge-must">MUST</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-hard"></div><div class="d-pip filled-hard"></div><div class="d-pip"></div></div></td>
+          <td><span class="value-pill v-high">Cao</span></td>
+          <td><span class="dep-chip">UC-06</span></td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-08</span></td>
+          <td>Phát hiện runbook drift</td>
+          <td><span class="uc-tag tag-java">Java</span></td>
+          <td><span class="legend-badge badge-should">SHOULD</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-medium"></div><div class="d-pip filled-medium"></div><div class="d-pip"></div></div></td>
+          <td><span class="value-pill v-medium">Trung bình</span></td>
+          <td><span class="dep-chip">UC-07</span></td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-09</span></td>
+          <td>Biên dịch câu hỏi tự nhiên → LogQL+</td>
+          <td><span class="uc-tag tag-java">Java</span></td>
+          <td><span class="legend-badge badge-must">MUST</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-hard"></div><div class="d-pip filled-hard"></div><div class="d-pip filled-hard"></div></div></td>
+          <td><span class="value-pill v-high">Cao</span></td>
+          <td><span class="dep-chip">UC-02</span></td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-10</span></td>
+          <td>Thư viện query chung của team</td>
+          <td><span class="uc-tag tag-java">Java</span> <span class="uc-tag tag-react">React</span></td>
+          <td><span class="legend-badge badge-should">SHOULD</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-easy"></div><div class="d-pip"></div><div class="d-pip"></div></div></td>
+          <td><span class="value-pill v-medium">Trung bình</span></td>
+          <td><span class="dep-chip">UC-09</span></td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-11</span></td>
+          <td>Xem log & live tail</td>
+          <td><span class="uc-tag tag-react">React</span></td>
+          <td><span class="legend-badge badge-must">MUST</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-medium"></div><div class="d-pip filled-medium"></div><div class="d-pip"></div></div></td>
+          <td><span class="value-pill v-high">Cao</span></td>
+          <td><span class="dep-chip">UC-02</span></td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-12</span></td>
+          <td>Chat với chatbot trả lời về log</td>
+          <td><span class="uc-tag tag-react">React</span> <span class="uc-tag tag-java">Java</span></td>
+          <td><span class="legend-badge badge-must">MUST</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-medium"></div><div class="d-pip filled-medium"></div><div class="d-pip"></div></div></td>
+          <td><span class="value-pill v-high">Cao</span></td>
+          <td><span class="dep-chip">UC-09</span></td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-13</span></td>
+          <td>Causal graph explorer (UI)</td>
+          <td><span class="uc-tag tag-react">React</span></td>
+          <td><span class="legend-badge badge-should">SHOULD</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-hard"></div><div class="d-pip filled-hard"></div><div class="d-pip"></div></div></td>
+          <td><span class="value-pill v-high">Cao</span></td>
+          <td><span class="dep-chip">UC-04</span></td>
+        </tr>
+        <tr>
+          <td><span class="ot-id">UC-14</span></td>
+          <td>Snapshot & so sánh đồ thị</td>
+          <td><span class="uc-tag tag-react">React</span> <span class="uc-tag tag-rust">Rust</span></td>
+          <td><span class="legend-badge badge-could">COULD</span></td>
+          <td><div class="difficulty-bar"><div class="d-pip filled-hard"></div><div class="d-pip filled-hard"></div><div class="d-pip"></div></div></td>
+          <td><span class="value-pill v-medium">Trung bình</span></td>
+          <td><span class="dep-chip">UC-13</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ══════════ UC-01 ══════════ -->
+  <section class="section-block" id="uc01">
+    <div class="section-eyebrow">Thu thập & Lưu trữ · UC-01</div>
+    <h2 class="section-title">Sidecar Thu Thập Log từ Pod</h2>
+    <p class="section-desc">Triển khai agent Go chạy trong mọi Kubernetes pod, âm thầm thu thập log từ file và stdout/stderr, buffer và chuyển tiếp đến aggregator mà không ảnh hưởng đến ứng dụng chính.</p>
+
+    <div class="uc-grid">
+      <div class="uc-card" style="border-top:3px solid var(--accent-rust)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-must"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-01</span>
+            <span class="uc-title">Sidecar Thu Thập Log từ Kubernetes Pod</span>
+            <div class="uc-tags">
+              <span class="uc-tag tag-go">Go</span>
+              <span class="legend-badge badge-must">MUST</span>
+            </div>
+          </div>
+        </div>
+        <div class="uc-body">
+          <div class="priority-matrix">
+            <div class="pm-header">Tiêu chí đánh giá</div>
+            <div class="pm-header" style="text-align:center">Điểm</div>
+            <div class="pm-header" style="text-align:center">Độ khó</div>
+            <div class="pm-header" style="text-align:center">Giá trị</div>
+            <div class="pm-cell">Nền tảng cho toàn bộ hệ thống</div>
+            <div class="pm-cell center" style="font-weight:700;color:var(--accent-rust)">P0</div>
+            <div class="pm-cell center"><div class="difficulty-bar"><div class="d-pip filled-medium"></div><div class="d-pip filled-medium"></div><div class="d-pip"></div></div></div>
+            <div class="pm-cell center"><span class="value-pill v-high">Cao</span></div>
+          </div>
+
+          <div class="uc-grid-2">
+            <div>
+              <div class="uc-block-label">Tác nhân</div>
+              <div class="uc-actor-row"><span class="actor-icon actor-sys">⚙</span> LogIntel Sidecar Agent (Go)</div>
+              <div class="uc-actor-row"><span class="actor-icon actor-eng">👤</span> DevOps Engineer (cấu hình)</div>
+            </div>
+            <div>
+              <div class="uc-block-label">Điều kiện tiên quyết</div>
+              <ul class="alt-list" style="list-style:none">
+                <li style="display:flex;gap:10px;font-size:12.5px"><span style="color:var(--accent-green)">✓</span> Pod đã được inject sidecar container</li>
+                <li style="display:flex;gap:10px;font-size:12.5px"><span style="color:var(--accent-green)">✓</span> Aggregator endpoint được cấu hình qua env var</li>
+                <li style="display:flex;gap:10px;font-size:12.5px"><span style="color:var(--accent-green)">✓</span> Volume mount chia sẻ giữa app và sidecar</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="uc-block-label">Luồng chính (Happy Path)</div>
+          <ol class="flow-list">
+            <li>Sidecar khởi động, đọc cấu hình từ environment variables (<code>LOGINTEL_LOG_PATHS</code>, <code>LOGINTEL_AGGREGATOR_ADDR</code>, <code>LOGINTEL_SERVICE_NAME</code>)</li>
+            <li>Agent mở file watcher dùng <code>fsnotify</code>, theo dõi inode (không phải filename) để xử lý log rotation</li>
+            <li>Agent attach vào Unix socket của container để capture stdout/stderr</li>
+            <li>Mỗi dòng log được đọc, gán metadata (pod name, namespace, container, timestamp_ns, sequence number)</li>
+            <li>Log event được đẩy vào ring buffer 64 MB in-process</li>
+            <li>Background goroutine batch các event thành frame 256–512 KB và gửi qua gRPC stream đến aggregator</li>
+            <li>Aggregator gửi ACK; buffer slot được giải phóng</li>
+          </ol>
+
+          <div class="note-box">
+            <strong>Thiết kế quan trọng:</strong> Theo dõi bằng inode, không phải tên file. Khi log rotate xảy ra, tên file thay đổi nhưng inode mới được tạo — agent phải detect và mở file mới để không bỏ sót log.
+          </div>
+
+          <div class="uc-block-label">Luồng ngoại lệ</div>
+          <ul class="alt-list">
+            <li>Aggregator không phản hồi: exponential backoff 50ms → 30s, buffer tiếp tục nhận log. Nếu buffer đầy (> 95%), bắt đầu drop sự kiện cũ nhất và tăng counter <code>dropped_events_total</code></li>
+            <li>Log file bị xoá trước khi đọc: ghi warning, tiếp tục watch — file mới sẽ xuất hiện khi app ghi lại</li>
+            <li>Sidecar crash/restart: đọc lại từ offset đã checkpoint (lưu trong emptyDir volume)</li>
+            <li>Cấu hình thiếu: fail fast với exit code 1 và log rõ ràng biến env nào còn thiếu</li>
+          </ul>
+
+          <div class="uc-block-label" style="margin-top:20px">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>Sidecar tiêu thụ &lt; 50m CPU và &lt; 96 MB RAM ở trạng thái ổn định</li>
+            <li>Thời gian khởi động &lt; 200ms — không được delay ứng dụng chính</li>
+            <li>Không mất log khi log rotation xảy ra (validated bằng integration test)</li>
+            <li>Counter <code>dropped_events_total</code> được expose qua <code>/metrics</code> Prometheus endpoint</li>
+            <li>Buffer fill % được expose như gauge — alert khi &gt; 70% trong 60 giây liên tục</li>
+            <li>Mọi event đều có trường <code>event_id</code> (UUID v7) và <code>timestamp_ns</code> chính xác tới nanosecond</li>
+            <li>Agent khởi động lại được sau crash mà không cần can thiệp thủ công</li>
+          </ul>
+
+          <div class="sfr-box">
+            <div class="sfr-title">Yêu cầu phi chức năng</div>
+            <div class="sfr-row"><span class="sfr-key">Throughput tối thiểu</span><span class="sfr-val"><span class="highlight">50,000 dòng/giây</span> mỗi sidecar không mất dữ liệu</span></div>
+            <div class="sfr-row"><span class="sfr-key">Latency end-to-end</span><span class="sfr-val">Dòng log → aggregator nhận được: <span class="highlight">&lt; 500ms p99</span></span></div>
+            <div class="sfr-row"><span class="sfr-key">Container image size</span><span class="sfr-val"><span class="highlight">&lt; 20 MB</span> (Alpine base + static Go binary)</span></div>
+            <div class="sfr-row"><span class="sfr-key">OTLP compatibility</span><span class="sfr-val">Event format tương thích OpenTelemetry log record spec</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ UC-02 ══════════ -->
+  <section class="section-block" id="uc02">
+    <div class="section-eyebrow">Thu thập & Lưu trữ · UC-02</div>
+    <h2 class="section-title">Chuẩn Hoá & Lưu Trữ Log Event</h2>
+    <p class="section-desc">Rust aggregator nhận raw log events từ các sidecar, parse và validate theo canonical schema, index để full-text search, và lưu vào chunk store phân vùng theo thời gian.</p>
+
+    <div class="uc-grid">
+      <div class="uc-card" style="border-top:3px solid var(--accent-rust)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-must"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-02</span>
+            <span class="uc-title">Chuẩn Hoá & Lưu Trữ Log Event</span>
+            <div class="uc-tags">
+              <span class="uc-tag tag-rust">Rust</span>
+              <span class="legend-badge badge-must">MUST</span>
+            </div>
+          </div>
+        </div>
+        <div class="uc-body">
+
+          <div class="uc-block-label">Luồng chính</div>
+          <ol class="flow-list">
+            <li>Aggregator nhận batch LogEvent protobuf qua gRPC stream từ sidecar</li>
+            <li>Validate schema: kiểm tra required fields, coerce kiểu dữ liệu, reject event có field không hợp lệ (trả về gRPC error chi tiết)</li>
+            <li>Enrich metadata: geolocation nếu có IP, service version từ label map, deployment context từ K8s API</li>
+            <li>Deduplication trong window 5 giây: hash (service_name + timestamp_ns + message) — drop duplicate, tăng counter</li>
+            <li>Index event vào Tantivy (full-text search engine): tokenise trường <code>message</code>, index các label fields</li>
+            <li>Ghi vào time-series chunk store: phân vùng theo 1-giờ × service_name. Chunk hiện tại (hot) ở memory, chunk cũ được flush xuống disk với nén zstd</li>
+            <li>Gửi ACK về sidecar sau khi đã index thành công</li>
+          </ol>
+
+          <div class="uc-block-label">Thiết kế chunk store</div>
+          <div class="code-block"><code><span class="code-comment">// Cấu trúc chunk file trên disk</span>
+<span class="code-comment">// Path: /data/chunks/{service}/{YYYY-MM-DD-HH}.chunk</span>
+ChunkHeader {
+  schema_version: u16,
+  service_name:   String,
+  time_start_ns:  i64,
+  time_end_ns:    i64,
+  event_count:    u64,
+  index_offset:   u64,  <span class="code-comment">// offset đến sparse index</span>
+  compression:    Compression, <span class="code-comment">// NONE | ZSTD</span>
+}
+
+<span class="code-comment">// Sparse index: mỗi 1000 events lưu 1 entry</span>
+SparseIndexEntry {
+  sequence_num: u64,
+  timestamp_ns: i64,
+  file_offset:  u64,
+}</code></div>
+
+          <div class="uc-block-label">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>Event vi phạm schema bị reject với error message rõ ràng, không được silent drop</li>
+            <li>Ingest latency: raw event → searchable &lt; 5 giây ở p99</li>
+            <li>Throughput: &gt; 100,000 events/giây trên phần cứng tham chiếu (8 CPU, 32 GB RAM)</li>
+            <li>Full-text query trên 7 ngày log (&lt; 500 GB) trả về trong &lt; 2 giây</li>
+            <li>Chunk files có checksum để phát hiện corruption</li>
+            <li>Retention policy daemon xoá chunk cũ theo cấu hình <code>RETENTION_DAYS</code></li>
+          </ul>
+
+          <div class="sfr-box">
+            <div class="sfr-title">Yêu cầu phi chức năng</div>
+            <div class="sfr-row"><span class="sfr-key">Không GC pause</span><span class="sfr-val">Rust đảm bảo zero GC trong ingest path — latency phải flat</span></div>
+            <div class="sfr-row"><span class="sfr-key">Compression ratio</span><span class="sfr-val">Cold chunks: <span class="highlight">zstd level 3</span>, mục tiêu &gt; 5x compression</span></div>
+            <div class="sfr-row"><span class="sfr-key">Hot/cold split</span><span class="sfr-val">Hot = 7 ngày gần nhất trong memory-mapped files; cold = disk</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ UC-03 ══════════ -->
+  <section class="section-block" id="uc03">
+    <div class="section-eyebrow">Causal Intelligence · UC-03</div>
+    <h2 class="section-title">Xây Dựng Causal Knowledge Graph</h2>
+    <p class="section-desc">Đây là use case phức tạp nhất và tạo ra giá trị cốt lõi của LogIntel. Rust graph engine liên tục phân tích log metrics để phát hiện quan hệ nhân quả giữa các service và mã hoá chúng thành đồ thị có trọng số confidence.</p>
+
+    <div class="uc-grid">
+      <div class="uc-card" style="border-top:3px solid var(--accent-rust)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-must"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-03</span>
+            <span class="uc-title">Xây Dựng Causal Knowledge Graph</span>
+            <div class="uc-tags">
+              <span class="uc-tag tag-rust">Rust</span>
+              <span class="legend-badge badge-must">MUST</span>
+            </div>
+          </div>
+        </div>
+        <div class="uc-body">
+
+          <div class="priority-matrix">
+            <div class="pm-header">Tiêu chí đánh giá</div>
+            <div class="pm-header" style="text-align:center">Điểm</div>
+            <div class="pm-header" style="text-align:center">Độ khó</div>
+            <div class="pm-header" style="text-align:center">Giá trị</div>
+            <div class="pm-cell">Core differentiator của LogIntel</div>
+            <div class="pm-cell center" style="font-weight:700;color:var(--accent-rust)">P0</div>
+            <div class="pm-cell center"><div class="difficulty-bar"><div class="d-pip filled-hard"></div><div class="d-pip filled-hard"></div><div class="d-pip filled-hard"></div></div></div>
+            <div class="pm-cell center"><span class="value-pill v-high">Cao</span></div>
+          </div>
+
+          <div class="uc-grid-3">
+            <div>
+              <div class="uc-block-label">Node types</div>
+              <ul class="ac-list">
+                <li><code>Service</code> — tên, version, namespace</li>
+                <li><code>ErrorClass</code> — fingerprint hash, frequency</li>
+                <li><code>Deployment</code> — timestamp, services affected</li>
+                <li><code>Anomaly</code> — type, severity, start time</li>
+                <li><code>Trace</code> — trace_id, duration, outcome</li>
+              </ul>
+            </div>
+            <div>
+              <div class="uc-block-label">Edge types (scored)</div>
+              <ul class="ac-list">
+                <li><code>CALLS</code> — call frequency/min</li>
+                <li><code>CAUSED</code> — Granger p-value</li>
+                <li><code>PRECEDED</code> — temporal proximity</li>
+                <li><code>RESOLVED_BY</code> — resolution speed</li>
+                <li><code>SIMILAR_TO</code> — cosine similarity</li>
+              </ul>
+            </div>
+            <div>
+              <div class="uc-block-label">Background tasks</div>
+              <ul class="ac-list">
+                <li>Metric extractor: 60s interval</li>
+                <li>Granger test: 60s interval</li>
+                <li>Edge decay: 1h interval</li>
+                <li>Graph compaction: 1h interval</li>
+                <li>Snapshot writer: 15min interval</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="uc-block-label">Pipeline xây dựng causal edge (3 giai đoạn)</div>
+          <ol class="flow-list">
+            <li><strong>Metric extraction:</strong> Với mỗi service, tính toán rolling window 60 giây: error rate (errors/s), log volume delta, warn-to-error ratio, retry log count. Chỉ chạy nếu service có ≥ 500 events trong window</li>
+            <li><strong>Granger causality test:</strong> Với mỗi cặp (A, B) có CALLS edge, chạy Granger test trên chuỗi thời gian error rate với lag 1 phút. Tạo CAUSED edge nếu p &lt; 0.05 trong 3 window liên tiếp. Confidence = 1 - p_value</li>
+            <li><strong>Edge lifecycle:</strong> Cạnh mới: confidence = raw score. Mỗi giờ: confidence *= 0.95 nếu không được reinforce. Prune khi confidence &lt; 0.1. Kỹ sư confirm: ghim ở confidence = 1.0, không decay</li>
+          </ol>
+
+          <div class="code-block"><code><span class="code-comment">// Granger test pseudocode — Rust implementation</span>
+<span class="code-keyword">fn</span> <span class="code-fn">granger_causality_test</span>(
+    series_a: &amp;[f64],  <span class="code-comment">// error rate của service A</span>
+    series_b: &amp;[f64],  <span class="code-comment">// error rate của service B</span>
+    lag: usize,        <span class="code-comment">// = 1 minute</span>
+) -> <span class="code-fn">GrangerResult</span> {
+    <span class="code-comment">// Unrestricted model: B(t) ~ B(t-1..lag) + A(t-1..lag)</span>
+    <span class="code-keyword">let</span> rss_unrestricted = fit_var_model(series_a, series_b, lag).residual_ss;
+    <span class="code-comment">// Restricted model: B(t) ~ B(t-1..lag) only</span>
+    <span class="code-keyword">let</span> rss_restricted = fit_ar_model(series_b, lag).residual_ss;
+    <span class="code-keyword">let</span> f_stat = compute_f_statistic(rss_restricted, rss_unrestricted, lag, n);
+    <span class="code-fn">GrangerResult</span> { p_value: p_from_f(f_stat, lag, n), f_statistic: f_stat }
+}
+
+<span class="code-comment">// Tạo CAUSED edge nếu đủ điều kiện</span>
+<span class="code-keyword">if</span> result.p_value &lt; <span class="code-num">0.05</span> &amp;&amp; consecutive_windows &gt;= <span class="code-num">3</span> {
+    graph.add_caused_edge(service_a, service_b, <span class="code-num">1.0</span> - result.p_value);
+}</code></div>
+
+          <div class="uc-block-label">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>CALLS edges xuất hiện trong vòng 5 phút sau khi có đủ log data</li>
+            <li>CAUSED edges chỉ được tạo khi p &lt; 0.05 trong 3 window liên tiếp (không tạo từ 1 window đơn lẻ)</li>
+            <li>Service có &lt; 500 events/window không được đưa vào Granger test</li>
+            <li>Precision của CAUSED edges: &gt; 70% được kỹ sư xác nhận khi được prompt (đo sau 30 ngày)</li>
+            <li>Graph trong memory sử dụng <code>petgraph::StableGraph</code> — node index không thay đổi sau khi xoá node</li>
+            <li>Snapshot 15 phút/lần được lưu và queryable theo timestamp</li>
+          </ul>
+
+          <div class="note-box">
+            <strong>Rủi ro thiết kế:</strong> False positive CAUSED edges dẫn kỹ sư đi sai hướng trong sự cố — nguy hiểm hơn việc không có edge. Ưu tiên precision hơn recall. Luôn hiển thị confidence interval trong UI.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ UC-06 ══════════ -->
+  <section class="section-block" id="uc06">
+    <div class="section-eyebrow">Runbook Learning · UC-06</div>
+    <h2 class="section-title">Ghi Nhận Giải Quyết Sự Cố</h2>
+    <p class="section-desc">Khi kỹ sư đánh dấu sự cố đã giải quyết qua lệnh <code>/resolve</code> trong chat, hệ thống tự động tổng hợp toàn bộ cuộc trò chuyện thành một runbook entry có cấu trúc và lưu vào runbook store.</p>
+
+    <div class="uc-grid">
+      <div class="uc-card" style="border-top:3px solid var(--accent-rust)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-must"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-06</span>
+            <span class="uc-title">Ghi Nhận Giải Quyết Sự Cố → Runbook Store</span>
+            <div class="uc-tags">
+              <span class="uc-tag tag-java">Java</span>
+              <span class="legend-badge badge-must">MUST</span>
+            </div>
+          </div>
+        </div>
+        <div class="uc-body">
+
+          <div class="uc-grid-2">
+            <div>
+              <div class="uc-block-label">Trigger</div>
+              <ul class="ac-list">
+                <li>Kỹ sư gõ <code>/resolve</code> trong chat interface</li>
+                <li>Hoặc click nút "Mark as Resolved" trên incident panel</li>
+              </ul>
+            </div>
+            <div>
+              <div class="uc-block-label">Tác nhân</div>
+              <div class="uc-actor-row"><span class="actor-icon actor-eng">👤</span> On-call Engineer</div>
+              <div class="uc-actor-row"><span class="actor-icon actor-sys">⚙</span> Runbook Learning Service (Java)</div>
+            </div>
+          </div>
+
+          <div class="uc-block-label">Luồng chính</div>
+          <ol class="flow-list">
+            <li>Engineer gõ <code>/resolve</code> — chat service gửi event <code>INCIDENT_RESOLVED</code> đến Runbook Learning Service với <code>session_id</code> và timestamp</li>
+            <li>Service truy xuất toàn bộ conversation history của session từ chat store</li>
+            <li>LLM được prompt để tổng hợp: trích xuất symptom description, action steps đã thực hiện theo thứ tự, expected outcome</li>
+            <li>Tạo symptom fingerprint: embed câu mô tả sự cố bằng all-MiniLM-L6-v2 (ONNX, 22 MB) → vector 768 chiều</li>
+            <li>Truy vấn causal graph tại thời điểm sự cố: lấy subgraph 2 hop xung quanh các service bị ảnh hưởng</li>
+            <li>Tạo structural fingerprint từ subgraph: hash topology (node types + edge types, không phải tên service cụ thể)</li>
+            <li>Lưu RunbookEntry vào PostgreSQL với confidence khởi đầu = 0.5 (pending validation)</li>
+            <li>Hệ thống bắt đầu monitoring 30 phút tiếp theo: theo dõi error rate của các service liên quan</li>
+            <li>Sau 30 phút: nếu error rate trở về baseline → confidence tăng lên 0.8 (confirmed). Nếu vẫn cao → giữ nguyên 0.5, gắn flag cần review</li>
+          </ol>
+
+          <div class="code-block"><code><span class="code-comment">// RunbookEntry schema (Java record)</span>
+<span class="code-keyword">record</span> <span class="code-fn">RunbookEntry</span>(
+  String       runbookId,          <span class="code-comment">// rb_{uuid_short}</span>
+  Instant      createdAt,
+  Instant      lastTriggered,
+  <span class="code-keyword">int</span>          triggerCount,
+  <span class="code-keyword">double</span>       confidence,          <span class="code-comment">// 0.0 – 1.0</span>
+
+  SymptomFingerprint fingerprint,
+  List&lt;ResolutionStep&gt; steps,
+
+  <span class="code-keyword">long</span>         expectedResolutionSecs,
+  List&lt;String&gt; postResolutionSignals,  <span class="code-comment">// điều kiện để confirm resolved</span>
+
+  <span class="code-keyword">boolean</span>      driftFlag,
+  Instant      driftDetectedAt
+) {}
+
+<span class="code-keyword">record</span> <span class="code-fn">SymptomFingerprint</span>(
+  List&lt;String&gt; errorClasses,
+  List&lt;String&gt; affectedServices,
+  String       graphSubgraphHash,
+  float[]      embeddingVector     <span class="code-comment">// 768-dim từ all-MiniLM-L6-v2</span>
+) {}</code></div>
+
+          <div class="uc-block-label">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>Lệnh <code>/resolve</code> nhận response trong &lt; 3 giây</li>
+            <li>Runbook entry luôn có ít nhất 1 resolution step được trích xuất</li>
+            <li>Embedding vector được lưu chính xác (validate bằng cosine similarity test với chính nó = 1.0)</li>
+            <li>30-minute validation window chạy async, không block chat</li>
+            <li>Kỹ sư có thể chỉnh sửa runbook entry trong vòng 1 giờ sau khi tạo</li>
+            <li>Runbook với confidence &lt; 0.4 sau validation được đánh dấu "low-confidence" và không được auto-suggest</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ UC-07 ══════════ -->
+  <section class="section-block" id="uc07">
+    <div class="section-eyebrow">Runbook Learning · UC-07</div>
+    <h2 class="section-title">Đề Xuất Runbook Khi Có Sự Cố</h2>
+    <p class="section-desc">Khi hệ thống phát hiện sự cố mới, tự động tìm kiếm runbook tương tự trong store và đề xuất cho kỹ sư inline trong chat với confidence score và thời gian giải quyết ước tính.</p>
+
+    <div class="uc-grid">
+      <div class="uc-card" style="border-top:3px solid var(--accent-rust)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-must"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-07</span>
+            <span class="uc-title">Đề Xuất Runbook Phù Hợp Khi Có Sự Cố Mới</span>
+            <div class="uc-tags">
+              <span class="uc-tag tag-java">Java</span>
+              <span class="legend-badge badge-must">MUST</span>
+            </div>
+          </div>
+        </div>
+        <div class="uc-body">
+
+          <div class="uc-block-label">Pipeline matching 2 giai đoạn</div>
+          <ol class="flow-list">
+            <li><strong>Coarse filter (Jaccard similarity):</strong> So sánh tập error_classes và affected_services giữa sự cố hiện tại và tất cả runbook. Giữ lại các runbook có Jaccard(error_classes) + Jaccard(services) &gt; 0.6. Kết quả: thường còn 5–20 candidates</li>
+            <li><strong>Fine ranking (embedding cosine similarity):</strong> Embed context sự cố hiện tại → so sánh cosine similarity với <code>embeddingVector</code> của các candidates. Sắp xếp giảm dần theo similarity score</li>
+            <li><strong>Filter bởi confidence:</strong> Chỉ đề xuất runbook có <code>confidence ≥ 0.6</code> và không có <code>drift_flag = true</code></li>
+            <li><strong>Render top-3:</strong> Trả về tối đa 3 runbook dưới dạng structured JSON để React render thành expandable card inline trong chat</li>
+          </ol>
+
+          <div class="uc-block-label">Format response đề xuất</div>
+          <div class="code-block"><code><span class="code-comment">// Response từ Runbook Suggestion API</span>
+{
+  <span class="code-string">"suggestions"</span>: [
+    {
+      <span class="code-string">"runbook_id"</span>: <span class="code-string">"rb_a3f9c2"</span>,
+      <span class="code-string">"title"</span>: <span class="code-string">"Redis memory pressure → payment-svc timeout"</span>,
+      <span class="code-string">"confidence"</span>: <span class="code-num">0.91</span>,
+      <span class="code-string">"similarity_score"</span>: <span class="code-num">0.87</span>,
+      <span class="code-string">"trigger_count"</span>: <span class="code-num">7</span>,
+      <span class="code-string">"expected_resolution_secs"</span>: <span class="code-num">180</span>,
+      <span class="code-string">"steps"</span>: [ <span class="code-comment">/* ResolutionStep[] */</span> ],
+      <span class="code-string">"drift_flag"</span>: <span class="code-keyword">false</span>
+    }
+  ],
+  <span class="code-string">"incident_context"</span>: {
+    <span class="code-string">"affected_services"</span>: [<span class="code-string">"payment-svc"</span>, <span class="code-string">"redis-cache"</span>],
+    <span class="code-string">"causal_path"</span>: <span class="code-string">"payment-svc ←[0.91]← redis-cache"</span>
+  }
+}</code></div>
+
+          <div class="uc-block-label">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>Đề xuất xuất hiện trong chat &lt; 2 giây sau khi sự cố được detect</li>
+            <li>Acceptance rate (kỹ sư click "Apply") &gt; 40% sau 90 ngày sử dụng</li>
+            <li>Runbook có <code>drift_flag = true</code> tuyệt đối không được đề xuất</li>
+            <li>Khi không có runbook nào đủ điều kiện, hiển thị "No matching runbooks — be the first to resolve and save this pattern"</li>
+            <li>Mỗi đề xuất có nút "This didn't work" để kỹ sư reject và trigger drift detection</li>
+          </ul>
+
+          <div class="info-box">
+            <strong>UX quan trọng:</strong> Đề xuất runbook phải xuất hiện <em>proactively</em> khi sự cố được phát hiện, không chỉ khi kỹ sư hỏi. Kỹ sư lúc 3 giờ sáng không nên phải nhớ câu lệnh gì để hỏi — hệ thống phải chủ động.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ UC-09 ══════════ -->
+  <section class="section-block" id="uc09">
+    <div class="section-eyebrow">NL Query Compiler · UC-09</div>
+    <h2 class="section-title">Biên Dịch Câu Hỏi Tự Nhiên → LogQL+</h2>
+    <p class="section-desc">Người dùng đặt câu hỏi bằng tiếng Anh tự nhiên. Hệ thống biên dịch thành LogQL+ AST có kiểu dữ liệu, hiển thị query đã biên dịch để người dùng xác nhận, sau đó thực thi an toàn.</p>
+
+    <div class="uc-grid">
+      <div class="uc-card" style="border-top:3px solid var(--accent-rust)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-must"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-09</span>
+            <span class="uc-title">Biên Dịch Câu Hỏi Tự Nhiên → Typed LogQL+ AST</span>
+            <div class="uc-tags">
+              <span class="uc-tag tag-java">Java</span>
+              <span class="legend-badge badge-must">MUST</span>
+            </div>
+          </div>
+        </div>
+        <div class="uc-body">
+
+          <div class="uc-block-label">Pipeline biên dịch 4 bước</div>
+          <ol class="flow-list">
+            <li><strong>Intent classification:</strong> Fine-tuned classifier (LangChain4j) phân loại query thành một trong: <code>LOG_SEARCH</code>, <code>GRAPH_QUERY</code>, <code>RUNBOOK_LOOKUP</code>, <code>ANOMALY_QUERY</code>, <code>AGGREGATION</code>. Confidence &lt; 0.7 → hỏi lại người dùng</li>
+            <li><strong>Entity extraction (NER):</strong> ONNX NER model trích xuất: service names (so khớp với service registry), time ranges (parse relative time "yesterday", "last 2h"), severity levels, error class names, metric thresholds</li>
+            <li><strong>AST synthesis:</strong> LLM được cung cấp intent + entities → tạo JSON AST có kiểu. Prompt bao gồm LogQL+ grammar spec và ví dụ few-shot. LLM không bao giờ tạo raw string</li>
+            <li><strong>Validation:</strong> AST được validate bởi Java schema validator. Lỗi được trả về LLM để sửa (tối đa 2 lần retry). Nếu vẫn lỗi → trả về error message cho người dùng với gợi ý reformulate</li>
+          </ol>
+
+          <div class="uc-block-label">LogQL+ AST schema</div>
+          <div class="code-block"><code><span class="code-comment">// Typed AST — không bao giờ là raw string</span>
+<span class="code-keyword">record</span> <span class="code-fn">LogQuery</span>(
+  QueryType         type,
+  List&lt;Filter&gt;      filters,
+  Optional&lt;TimeRange&gt; timeRange,
+  Optional&lt;Aggregation&gt; aggregation,
+  Optional&lt;GraphTraversal&gt; graphOp,  <span class="code-comment">// chỉ cho GRAPH_QUERY</span>
+  Optional&lt;Sort&gt;    sort,
+  <span class="code-keyword">int</span>               limit
+) {}
+
+<span class="code-keyword">record</span> <span class="code-fn">Filter</span>(String field, FilterOp op, String value) {}
+<span class="code-comment">// FilterOp: EQ | NEQ | CONTAINS | GTE | LTE | IN | REGEX</span>
+
+<span class="code-keyword">record</span> <span class="code-fn">GraphTraversal</span>(
+  String     fromService,
+  EdgeType   traverseEdge,    <span class="code-comment">// CAUSED | CALLS | RESOLVED_BY</span>
+  <span class="code-keyword">double</span>     minConfidence,
+  <span class="code-keyword">int</span>        maxDepth
+) {}</code></div>
+
+          <div class="uc-block-label">Ví dụ biên dịch thực tế</div>
+          <div class="code-block"><code><span class="code-comment">// Input: "Show timeout errors in payment-svc in the last 2 hours"</span>
+
+<span class="code-comment">// Output AST:</span>
+{
+  <span class="code-string">"type"</span>: <span class="code-string">"LOG_SEARCH"</span>,
+  <span class="code-string">"filters"</span>: [
+    { <span class="code-string">"field"</span>: <span class="code-string">"service_name"</span>, <span class="code-string">"op"</span>: <span class="code-string">"EQ"</span>,       <span class="code-string">"value"</span>: <span class="code-string">"payment-svc"</span> },
+    { <span class="code-string">"field"</span>: <span class="code-string">"severity"</span>,     <span class="code-string">"op"</span>: <span class="code-string">"GTE"</span>,      <span class="code-string">"value"</span>: <span class="code-string">"ERROR"</span> },
+    { <span class="code-string">"field"</span>: <span class="code-string">"message"</span>,      <span class="code-string">"op"</span>: <span class="code-string">"CONTAINS"</span>, <span class="code-string">"value"</span>: <span class="code-string">"timeout"</span> }
+  ],
+  <span class="code-string">"timeRange"</span>: { <span class="code-string">"relative"</span>: <span class="code-string">"2h"</span> },
+  <span class="code-string">"sort"</span>: { <span class="code-string">"field"</span>: <span class="code-string">"timestamp_ns"</span>, <span class="code-string">"direction"</span>: <span class="code-string">"DESC"</span> },
+  <span class="code-string">"limit"</span>: <span class="code-num">100</span>
+}</code></div>
+
+          <div class="uc-block-label">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>Compilation success rate &gt; 85% (query compile thành công không cần người dùng reformulate)</li>
+            <li>Compiled query luôn được hiển thị cho người dùng trước khi thực thi — không execute ngầm</li>
+            <li>Thời gian biên dịch &lt; 3 giây từ lúc người dùng submit đến khi query được hiển thị</li>
+            <li>LLM không được phép tạo raw LogQL+ string — validate bằng type checking trước khi serialize</li>
+            <li>Mọi compilation attempt (kể cả thất bại) được log để cải thiện model</li>
+            <li>Người dùng có thể chỉnh sửa LogQL+ AST trực tiếp sau khi xem compiled query</li>
+          </ul>
+
+          <div class="note-box">
+            <strong>Security:</strong> AST-based compilation ngăn chặn prompt injection. Nếu người dùng cố nhúng SQL injection hay LogQL injection vào câu hỏi, nó sẽ bị bắt tại bước schema validation trước khi đến execution layer.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ UC-11 ══════════ -->
+  <section class="section-block" id="uc11">
+    <div class="section-eyebrow">Giao diện React · UC-11</div>
+    <h2 class="section-title">Xem Log & Live Tail</h2>
+    <p class="section-desc">Log explorer hiển thị log events với virtual scrolling, hỗ trợ live tail qua SSE, filter đa chiều, và highlight các dòng log tham gia vào causal edge đang active.</p>
+
+    <div class="uc-grid">
+      <div class="uc-card" style="border-top:3px solid var(--accent-rust)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-must"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-11</span>
+            <span class="uc-title">Log Explorer — Xem Log & Live Tail</span>
+            <div class="uc-tags">
+              <span class="uc-tag tag-react">React</span>
+              <span class="legend-badge badge-must">MUST</span>
+            </div>
+          </div>
+        </div>
+        <div class="uc-body">
+
+          <div class="uc-grid-2">
+            <div>
+              <div class="uc-block-label">Tính năng core</div>
+              <ul class="ac-list">
+                <li>TanStack Virtual: tối đa 200 DOM rows, cuộn mượt với 1M+ dòng log</li>
+                <li>Live tail via SSE với nút Pause/Resume</li>
+                <li>Filter chips: service, severity, time range, label key=value</li>
+                <li>Filter state encode vào URL — link shareable</li>
+                <li>Highlight log line tham gia causal edge (màu theo confidence)</li>
+              </ul>
+            </div>
+            <div>
+              <div class="uc-block-label">Tương tác nâng cao</div>
+              <ul class="ac-list">
+                <li>Click log line → expand detail panel</li>
+                <li>Nút "Explain this error" → mở chat với context</li>
+                <li>Log line có trace_id → expand reconstructed trace</li>
+                <li>Copy log line, copy as LogQL+ filter</li>
+                <li>Keyboard shortcuts: j/k điều hướng, / để search</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="uc-block-label">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>Render 200 visible rows với frame rate ổn định ≥ 60fps</li>
+            <li>Live tail latency (server emit → visible trong UI) &lt; 1 giây</li>
+            <li>Filter thay đổi → kết quả cập nhật &lt; 500ms</li>
+            <li>URL với filter state có thể chia sẻ và reproduce chính xác</li>
+            <li>Không bao giờ dùng <code>innerHTML</code> để render log content (XSS prevention)</li>
+            <li>Accessible: keyboard navigable, screen reader announces log count</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ UC-12 ══════════ -->
+  <section class="section-block" id="uc12">
+    <div class="section-eyebrow">Giao diện React · UC-12</div>
+    <h2 class="section-title">Chat với Chatbot về Log & Sự Cố</h2>
+    <p class="section-desc">Interface chat cho phép kỹ sư đặt câu hỏi bằng ngôn ngữ tự nhiên. Chatbot trả lời bằng cách stream tokens, đính kèm citations có thể click, và proactively đề xuất runbook khi detect sự cố.</p>
+
+    <div class="uc-grid">
+      <div class="uc-card" style="border-top:3px solid var(--accent-rust)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-must"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-12</span>
+            <span class="uc-title">Chat Interface — Hỏi Đáp về Log & Sự Cố</span>
+            <div class="uc-tags">
+              <span class="uc-tag tag-react">React</span>
+              <span class="uc-tag tag-java">Java</span>
+              <span class="legend-badge badge-must">MUST</span>
+            </div>
+          </div>
+        </div>
+        <div class="uc-body">
+
+          <div class="uc-block-label">Luồng chính — Câu hỏi về log</div>
+          <ol class="flow-list">
+            <li>Kỹ sư nhập câu hỏi và nhấn Enter</li>
+            <li>React gửi POST <code>/api/chat</code> với message và <code>session_id</code></li>
+            <li>Java chatbot service nhận, gọi NL Compiler (UC-09) để biên dịch query</li>
+            <li>Nếu biên dịch thành công: thực thi LogQL+ query, lấy kết quả từ Rust store, đưa vào RAG context</li>
+            <li>LLM tạo response với citations dạng <code>[service:log_id]</code> và <code>[graph:edge_id]</code></li>
+            <li>Response được stream về React qua SSE, render token-by-token</li>
+            <li>React parse citations trong stream, render thành clickable chips theo thời gian thực</li>
+          </ol>
+
+          <div class="uc-block-label">Slash commands</div>
+          <div class="uc-grid-2">
+            <div class="code-block" style="margin:0"><code><span class="code-keyword">/graph</span> payment-svc
+  → Mở Graph Explorer tập trung vào node
+
+<span class="code-keyword">/anomalies</span> last-1h
+  → Liệt kê anomalies trong 1h qua
+
+<span class="code-keyword">/runbooks</span>
+  → Hiển thị runbook store
+
+<span class="code-keyword">/resolve</span>
+  → Kích hoạt UC-06 (lưu runbook)</code></div>
+            <div>
+              <div class="uc-block-label">Citations format</div>
+              <ul class="ac-list">
+                <li><code>[payment-svc:ln4421]</code> → nhảy đến Log Explorer dòng đó</li>
+                <li><code>[graph:payment→redis,0.91]</code> → mở Graph Explorer tại cạnh đó</li>
+                <li><code>[runbook:rb_a3f9c2]</code> → expand runbook card inline</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="uc-block-label">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>First token xuất hiện &lt; 1 giây sau khi người dùng submit</li>
+            <li>Stream bị ngắt giữa chừng: hiển thị indicator "Response interrupted", không để UI broken state</li>
+            <li>LLM không được phát biểu facts không có trong retrieved context (system prompt enforce)</li>
+            <li>Conversation history giữ 10 turns gần nhất trong context window</li>
+            <li>Session history lưu localStorage với TTL 24 giờ</li>
+            <li>Mọi response có "Was this helpful?" feedback đơn giản (👍/👎)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ UC-13 ══════════ -->
+  <section class="section-block" id="uc13">
+    <div class="section-eyebrow">Giao diện React · UC-13</div>
+    <h2 class="section-title">Causal Graph Explorer</h2>
+    <p class="section-desc">Giao diện đồ thị tương tác hiển thị causal knowledge graph theo thời gian thực. Node color encode health status, edge thickness encode confidence weight, cạnh nhân quả active có animation.</p>
+
+    <div class="uc-grid">
+      <div class="uc-card" style="border-top:3px solid var(--accent-amber)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-should"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-13</span>
+            <span class="uc-title">Causal Graph Explorer — Service Map Nhân Quả</span>
+            <div class="uc-tags">
+              <span class="uc-tag tag-react">React</span>
+              <span class="legend-badge badge-should">SHOULD</span>
+            </div>
+          </div>
+        </div>
+        <div class="uc-body">
+
+          <div class="uc-grid-3">
+            <div>
+              <div class="uc-block-label">Node visual encoding</div>
+              <ul class="ac-list">
+                <li>🟢 Xanh: error rate &lt; 0.1/s (nominal)</li>
+                <li>🟡 Vàng: error rate 0.1–1/s (degraded)</li>
+                <li>🔴 Đỏ: error rate &gt; 1/s (incident)</li>
+                <li>Kích thước node = call volume</li>
+              </ul>
+            </div>
+            <div>
+              <div class="uc-block-label">Edge visual encoding</div>
+              <ul class="ac-list">
+                <li>Solid: CALLS edge</li>
+                <li>Dashed animated: CAUSED edge active</li>
+                <li>Độ dày = confidence weight</li>
+                <li>Màu đỏ = CAUSED edge trong 15 phút qua</li>
+              </ul>
+            </div>
+            <div>
+              <div class="uc-block-label">Tương tác</div>
+              <ul class="ac-list">
+                <li>Click node → side panel</li>
+                <li>Click edge → confirm/reject causality</li>
+                <li>Double-click → focus subgraph</li>
+                <li>Ctrl+click → multi-select</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="uc-block-label">Side panel khi click node</div>
+          <ul class="ac-list">
+            <li>20 log lines gần nhất từ service này (link đến Log Explorer)</li>
+            <li>Causal path đến root của incident hiện tại</li>
+            <li>Active runbook suggestions liên quan đến node</li>
+            <li>Biểu đồ mini error rate 1 giờ qua</li>
+          </ul>
+
+          <div class="uc-block-label">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>Render mượt 500+ nodes với WebGL renderer (cytoscape-fcose)</li>
+            <li>Graph update theo thời gian thực, tối đa 5 giây lag</li>
+            <li>Layout không re-run khi chỉ có metric update, chỉ re-run khi topology thay đổi</li>
+            <li>Minimap cho graph lớn; zoom-to-fit khi có incident mới</li>
+          </ul>
+
+          <div class="info-box">
+            <strong>Lưu ý implementation:</strong> Dùng <code>cytoscape-fcose</code> layout thuật toán. Với graph lớn (&gt; 200 nodes), enable WebGL renderer bằng <code>cytoscape-canvas</code>. Layout chỉ chạy lại khi <code>topology_version</code> thay đổi — đừng re-layout mỗi khi metric update.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ REMAINING USE CASES (collapsed summary) ══════════ -->
+  <section class="section-block" id="uc04">
+    <div class="section-eyebrow">Causal Intelligence · UC-04 / UC-05</div>
+    <h2 class="section-title">Duyệt & Xác Nhận Causal Graph</h2>
+    <p class="section-desc">UC-04: GraphQL API cho phép query đồ thị — shortest causal path, subgraph extraction, historical snapshots. UC-05: Kỹ sư có thể confirm hoặc reject CAUSED edge trực tiếp từ Graph Explorer UI.</p>
+
+    <div class="uc-grid">
+      <div class="uc-card" style="border-top:3px solid var(--accent-amber)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-should"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-04</span>
+            <span class="uc-title">GraphQL API — Duyệt Causal Graph</span>
+            <div class="uc-tags"><span class="uc-tag tag-rust">Rust</span><span class="legend-badge badge-should">SHOULD</span></div>
+          </div>
+        </div>
+        <div class="uc-body">
+          <div class="uc-block-label">Queries được hỗ trợ</div>
+          <div class="code-block"><code><span class="code-comment"># Shortest causal path giữa 2 service</span>
+<span class="code-fn">causalPath</span>(from: <span class="code-string">"payment-svc"</span>, to: <span class="code-string">"redis-cache"</span>, minConfidence: <span class="code-num">0.7</span>)
+
+<span class="code-comment"># Subgraph xung quanh service với radius N hops</span>
+<span class="code-fn">subgraph</span>(service: <span class="code-string">"payment-svc"</span>, depth: <span class="code-num">2</span>, since: <span class="code-string">"2h"</span>)
+
+<span class="code-comment"># Trạng thái đồ thị tại thời điểm trong quá khứ</span>
+<span class="code-fn">snapshot</span>(at: <span class="code-string">"2025-06-01T02:30:00Z"</span>)
+
+<span class="code-comment"># Tất cả CAUSED edges có confidence > threshold</span>
+<span class="code-fn">causalEdges</span>(minConfidence: <span class="code-num">0.8</span>, activeWithin: <span class="code-string">"24h"</span>)</code></div>
+          <div class="uc-block-label">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>Causal path query trên graph &lt; 1000 nodes trả về &lt; 500ms</li>
+            <li>Subgraph query hỗ trợ tối đa depth = 5</li>
+            <li>Snapshot query tái tạo đúng trạng thái graph tại timestamp đã cho</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="uc-card" style="border-top:3px solid var(--accent-amber)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-should"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-05</span>
+            <span class="uc-title">Xác Nhận / Từ Chối Causal Edge</span>
+            <div class="uc-tags"><span class="uc-tag tag-react">React</span><span class="uc-tag tag-rust">Rust</span><span class="legend-badge badge-should">SHOULD</span></div>
+          </div>
+        </div>
+        <div class="uc-body">
+          <div class="uc-block-label">Luồng</div>
+          <ol class="flow-list">
+            <li>Kỹ sư click vào CAUSED edge trong Graph Explorer</li>
+            <li>Pop-up hiển thị: confidence score, p-value, số window đã confirm, evidence log samples</li>
+            <li>Kỹ sư click "Confirm" hoặc "Reject"</li>
+            <li>Confirm: edge được pin, confidence = 1.0, không decay, annotation được lưu</li>
+            <li>Reject: edge bị xoá ngay lập tức; negative example được lưu để cải thiện Granger threshold</li>
+          </ol>
+          <div class="uc-block-label">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>Pinned edge không bao giờ bị decay hoặc pruned (trừ khi bị reject sau đó)</li>
+            <li>Confirmation được audit log với user ID và timestamp</li>
+            <li>Rejected edge không xuất hiện lại cho cùng cặp service trong 24 giờ</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-block" id="uc08">
+    <div class="section-eyebrow">Runbook Learning · UC-08 / UC-10</div>
+    <h2 class="section-title">Drift Detection & Query Library</h2>
+
+    <div class="uc-grid">
+      <div class="uc-card" style="border-top:3px solid var(--accent-amber)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-should"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-08</span>
+            <span class="uc-title">Phát Hiện Runbook Drift</span>
+            <div class="uc-tags"><span class="uc-tag tag-java">Java</span><span class="legend-badge badge-should">SHOULD</span></div>
+          </div>
+        </div>
+        <div class="uc-body">
+          <div class="uc-block-label">Điều kiện trigger drift flag</div>
+          <ul class="ac-list">
+            <li>Runbook được triggered nhưng sự cố không resolved trong 2x <code>expectedResolutionSecs</code></li>
+            <li>Post-resolution signals (log metrics) không trở về baseline sau 30 phút</li>
+            <li>Kỹ sư bấm "This didn't work" sau khi apply runbook</li>
+            <li>Runbook triggered ≥ 3 lần với acceptance rate &lt; 20% trong 30 ngày gần nhất</li>
+          </ul>
+          <div class="uc-block-label">Hành động khi drift detected</div>
+          <ul class="ac-list">
+            <li>Set <code>drift_flag = true</code>, lưu <code>drift_detected_at</code></li>
+            <li>Gửi notification đến channel #oncall: "Runbook rb_xxx có thể đã outdated"</li>
+            <li>Đề xuất guided chat flow để cập nhật runbook dựa trên resolution gần nhất</li>
+            <li>Hiển thị badge ⚠️ trong Runbook Explorer UI</li>
+          </ul>
+          <div class="uc-block-label">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>True positive rate &gt; 60% (validated qua engineer feedback)</li>
+            <li>Không false-positive drift trên runbook được confirm tốt (&lt; 5%)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="uc-card" style="border-top:3px solid var(--accent-amber)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-should"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-10</span>
+            <span class="uc-title">Thư Viện Query Chung của Team</span>
+            <div class="uc-tags"><span class="uc-tag tag-java">Java</span><span class="uc-tag tag-react">React</span><span class="legend-badge badge-should">SHOULD</span></div>
+          </div>
+        </div>
+        <div class="uc-body">
+          <div class="uc-block-label">Luồng tự động</div>
+          <ol class="flow-list">
+            <li>Mỗi query thực thi thành công được normalise (strip literal values, giữ structure)</li>
+            <li>Track execution count per normalised pattern</li>
+            <li>Pattern được dùng &gt; 3 lần → promote lên shared library với auto-generated name</li>
+            <li>Library hiển thị là one-click chips trong Chat UI, sorted by relevance to current incident</li>
+          </ol>
+          <div class="uc-block-label">Tiêu chí chấp nhận</div>
+          <ul class="ac-list">
+            <li>&gt; 50% queries dùng saved query sau 60 ngày</li>
+            <li>Kỹ sư có thể annotate query với context ("dùng khi payment-svc incident")</li>
+            <li>Library expose REST endpoint để tích hợp với PagerDuty/Opsgenie</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-block" id="uc14">
+    <div class="section-eyebrow">Giao diện React · UC-14</div>
+    <h2 class="section-title">Graph Snapshot & So Sánh</h2>
+
+    <div class="uc-grid">
+      <div class="uc-card" style="border-top:3px solid var(--accent-green)">
+        <div class="uc-header">
+          <div class="uc-id-stripe stripe-could"></div>
+          <div class="uc-header-body">
+            <span class="uc-id">UC-14</span>
+            <span class="uc-title">Snapshot & So Sánh Trạng Thái Đồ Thị</span>
+            <div class="uc-tags"><span class="uc-tag tag-react">React</span><span class="uc-tag tag-rust">Rust</span><span class="legend-badge badge-could">COULD</span></div>
+          </div>
+        </div>
+        <div class="uc-body">
+          <p style="font-size:12.5px;color:var(--ink-3);margin-bottom:16px;line-height:1.7">
+            Cho phép kỹ sư lưu snapshot graph tại một thời điểm (ví dụ: "before deploy v2.4.1") và sau đó so sánh với trạng thái hiện tại hoặc thời điểm khác. Diff view highlight các cạnh mới xuất hiện, biến mất, hoặc thay đổi confidence. Rất hữu ích cho post-incident review.
+          </p>
+          <div class="uc-block-label">Scope (v2.0)</div>
+          <ul class="ac-list">
+            <li>Snapshot on-demand với custom label ("before-redis-upgrade")</li>
+            <li>Diff view: green = edge mới, red = edge biến mất, yellow = confidence thay đổi &gt; 20%</li>
+            <li>Side-by-side hoặc overlay mode</li>
+            <li>Export diff report dưới dạng Markdown cho post-mortem document</li>
+          </ul>
+          <div class="note-box" style="margin-top:16px">
+            <strong>Deferred đến v2.0:</strong> Use case này có giá trị cao nhưng phụ thuộc vào UC-13 hoàn chỉnh và Rust snapshot API ổn định. Ưu tiên sau khi MVP được dogfood nội bộ.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// Sidebar active tracking
+const sections = document.querySelectorAll('section[id]');
+const sidebarItems = document.querySelectorAll('.sidebar-item[href]');
+
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY;
+
+  // Scroll-to-top button
+  document.getElementById('scrollTop').classList.toggle('visible', scrollY > 400);
+
+  // Active sidebar item
+  let current = '';
+  sections.forEach(s => {
+    if (s.offsetTop - 120 <= scrollY) current = s.getAttribute('id');
+  });
+
+  sidebarItems.forEach(item => {
+    item.classList.toggle('active', item.getAttribute('href') === '#' + current);
+  });
+});
+
+// Smooth scroll for sidebar links
+sidebarItems.forEach(item => {
+  item.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(item.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+
+</body>
+</html>
