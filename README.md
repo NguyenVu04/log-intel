@@ -338,7 +338,7 @@ kubectl apply -f k8s/crds/
 kubectl apply -f k8s/rbac/
 
 # Deploy the Intelligence Core
-kubectl apply -f k8s/rust-core/
+kubectl apply -f k8s/rust-engine/
 
 # Deploy Retrieval & Chat
 kubectl apply -f k8s/java-retrieval/
@@ -401,7 +401,7 @@ logintel/
 │   │   └── transport/               # gRPC client + exponential backoff retry
 │   └── Dockerfile
 │
-├── core/                            # Rust — intelligence core
+├── engine/                          # Rust — intelligence core
 │   ├── aggregator/                  # log parsing, normalisation, tantivy index
 │   │   ├── src/
 │   │   └── Cargo.toml
@@ -449,7 +449,7 @@ logintel/
 
 These decisions were made deliberately. They should not be changed without a corresponding ADR and team discussion.
 
-### ADR-001 — Rust core starts as a single binary
+### ADR-001 — Rust engine starts as a single binary
 
 **Decision**: `aggregator` and `graph` are separate Rust modules with clean internal boundaries, but compiled as one binary in the MVP.
 

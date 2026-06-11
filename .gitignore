@@ -1,0 +1,45 @@
+# ── Rust ────────────────────────────────────────────────────────────────────
+engine/target/
+**/*.rs.bk
+Cargo.lock          # remove this line if engine is a binary crate you ship
+
+# ── Go ──────────────────────────────────────────────────────────────────────
+sidecar/vendor/
+*.exe
+*.test
+*.out
+
+# ── Java / Gradle (retrieval) ────────────────────────────────────────────────
+retrieval/.gradle/
+retrieval/build/
+retrieval/.idea/
+retrieval/*.iml
+!retrieval/gradle/wrapper/gradle-wrapper.jar
+
+# ── Node / pnpm (ui) ────────────────────────────────────────────────────────
+ui/node_modules/
+ui/dist/
+ui/.tanstack/
+ui/.vite/
+
+# ── Docker ──────────────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── OS / editor ─────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+*.iml
+
+# ── Secrets / local config ──────────────────────────────────────────────────
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+local/
