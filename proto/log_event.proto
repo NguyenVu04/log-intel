@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package logintel.v1;
+
+option go_package = "github.com/NguyenVu04/log-intel/sidecar/gen/proto/v1;logintelpb";
+option java_package = "io.logintel.proto.v1";
+option java_multiple_files = true;
+
+// Severity levels for log events, ordered from least to most severe.
+enum Severity {
+  SEVERITY_UNSPECIFIED = 0;
+  SEVERITY_TRACE       = 1;
+  SEVERITY_DEBUG       = 2;
+  SEVERITY_INFO        = 3;
+  SEVERITY_WARN        = 4;
+  SEVERITY_ERROR       = 5;
+  SEVERITY_FATAL       = 6;
+}
+
+// LogEvent is the canonical log record. Defined once here; Go, Rust, and Java
+// all generate from this file — no hand-written struct mirrors the schema.
+message LogEvent {
+  string   event_id       = 1;  // UUID v7 (time-ordered)
+  int64    timestamp_ns   = 2;  // Unix nanoseconds
+  string   service_name   = 3;
+  string   namespace      = 4;
+  string   pod_name       = 5;
+  string   container_name = 6;
+  Severity severity       = 7;
+  string   message        = 8;
+  string   trace_id       = 9;  // optional — propagated from X-Trace-Id header
+  string   span_id        = 10;
+  map<string, string> labels = 11;
+  bytes    raw_bytes      = 12; // original unmodified log line
+}
+
+// LogEventBatch allows the sidecar to send multiple events in a single RPC,
+// reducing per-call overhead at high ingest rates.
+message LogEventBatch {
+  repeated LogEvent events = 1;
+}
+
+// IngestResponse is returned by the aggregator for each batch.
+message IngestResponse {
+  uint32 accepted = 1; // number of events accepted
+  uint32 rejected = 2; // number of events rejected (schema validation failures)
+}
+
+// LogIntelService is the gRPC service exposed by the Rust aggregator.
+// The Go sidecar calls this; the Java retrieval layer calls it for log queries.
+service LogIntelService {
+  // Ingest accepts a batch of log events from a sidecar instance.
+  rpc Ingest(LogEventBatch) returns (IngestResponse);
+
+  // IngestStream accepts a client-side stream of batches for high-throughput sidecars.
+  rpc IngestStream(stream LogEventBatch) returns (IngestResponse);
+}
